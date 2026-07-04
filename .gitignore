@@ -8,3 +8,10 @@ Thumbs.db
 
 # Local device dumps from `show -o` (keep outside git)
 backups/
+
+# Go build artifacts
+/bin/
+/dist/
+*.test
+*.out
+coverage.txt

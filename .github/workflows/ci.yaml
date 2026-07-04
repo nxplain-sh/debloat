@@ -10,8 +10,45 @@ permissions:
   contents: read
 
 jobs:
-  lint:
-    name: Lint
+  go:
+    name: Build & test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: stable
+          cache: true
+
+      - name: Verify gofmt
+        run: |
+          unformatted=$(gofmt -l .)
+          if [ -n "$unformatted" ]; then
+            echo "These files need gofmt:"
+            echo "$unformatted"
+            exit 1
+          fi
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: staticcheck
+        uses: dominikh/staticcheck-action@v1
+        with:
+          version: latest
+          install-go: false
+
+      - name: Test
+        run: go test -race ./...
+
+      - name: Build
+        run: go build ./...
+
+  shell:
+    name: Shell lint (legacy script)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -19,6 +56,13 @@ jobs:
 
       - name: ShellCheck
         run: shellcheck scripts/debloat.sh
+
+  docs:
+    name: Docs & config format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Prettier (check formatting)
         run: npx --yes prettier@3 --check . --ignore-unknown

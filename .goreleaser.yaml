@@ -1,0 +1,51 @@
+# GoReleaser configuration — https://goreleaser.com
+# Build multi-OS/arch binaries and publish them to GitHub Releases on tag push.
+version: 2
+
+project_name: vivo-debloater
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: vivo-debloater
+    main: ./cmd/vivo-debloater
+    binary: vivo-debloater
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X github.com/miguelmartens/vivo-debloater/internal/cli.version={{ .Version }}
+
+archives:
+  - id: default
+    formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+    files:
+      - README.md
+      - LICENSE
+      - packages.txt
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore:"
+
+release:
+  draft: false

@@ -8,23 +8,24 @@ sizes are welcome — bug fixes, package-list corrections, and documentation.
 
 - Be kind and constructive. See the [Code of Conduct](CODE_OF_CONDUCT.md).
 - Keep changes focused. One logical change per pull request.
-- The tooling stays **dependency-light**: POSIX-ish `bash`, `adb`, and a
-  `Makefile` facade. Please don't introduce heavyweight runtimes.
+- The CLI is written in **Go with no external dependencies** (standard library
+  only). `adb` stays an external runtime dependency. Please don't add third-party
+  modules without a good reason.
 
 ## Getting set up
 
 ```bash
-git clone git@github.com:miguelmartens/vivo-debloater.git
+git clone https://github.com/miguelmartens/vivo-debloater.git
 cd vivo-debloater
 make install-adb        # optional: adb via Homebrew (android-platform-tools)
-make install-prettier   # optional: Prettier for formatting
+make build              # ./bin/vivo-debloater
 ```
 
 You can develop and test most changes **without a phone** using `--dry-run`,
 which prints the `adb` commands that would run:
 
 ```bash
-make uninstall ARGS='--dry-run'
+make run ARGS='uninstall --dry-run'
 ```
 
 ## Before you open a pull request
@@ -32,12 +33,15 @@ make uninstall ARGS='--dry-run'
 Run the same checks CI runs:
 
 ```bash
-make shellcheck       # lint scripts/debloat.sh (requires shellcheck on PATH)
-make prettier-check   # verify formatting
+make check            # gofmt check + go vet + staticcheck + go test -race
+make shellcheck       # lint the legacy scripts/debloat.sh (requires shellcheck)
+make prettier-check   # verify docs/config formatting
 ```
 
-- **`scripts/debloat.sh`** must pass `shellcheck` with no warnings.
-- All files must be Prettier-clean (`make prettier` to auto-format).
+- Go code must be **`gofmt`-clean** and pass **`go vet`** and **`staticcheck`**.
+- Add or update **tests** for behavior changes (`internal/...`).
+- The legacy **`scripts/debloat.sh`** must still pass `shellcheck`.
+- Docs and config must be **Prettier-clean** (`make prettier` to auto-format).
 - If you touch behavior, update `README.md` to match.
 
 ## Editing the package list

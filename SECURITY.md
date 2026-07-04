@@ -2,10 +2,10 @@
 
 ## Scope
 
-vivo-debloater is a set of local `bash` + `adb` helpers. It has no server, no
+vivo-debloater is a local Go CLI that drives `adb`. It has no server, no
 network service, and stores no credentials. The main risk surface is:
 
-- shell handling of package names and file paths, and
+- how package names and file paths from `packages.txt` are passed to `adb`, and
 - the `adb` commands the tool runs against a connected device.
 
 ## Reporting a vulnerability

@@ -17,7 +17,7 @@ body:
     id: command
     attributes:
       label: Command run
-      placeholder: "./scripts/debloat.sh uninstall --dry-run -f packages.txt"
+      placeholder: "vivo-debloater uninstall --dry-run -f packages.txt"
     validations:
       required: true
   - type: textarea
