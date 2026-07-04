@@ -8,7 +8,7 @@ LDFLAGS := -s -w -X github.com/miguelmartens/vivo-debloater/internal/cli.version
 
 .DEFAULT_GOAL := help
 .PHONY: help build install run test vet fmt fmt-check lint check tidy clean \
-        shellcheck prettier prettier-check install-adb
+        prettier prettier-check install-adb
 
 help:
 	@echo "vivo-debloater"
@@ -24,7 +24,6 @@ help:
 	@echo "  make check          fmt-check + vet + lint + test"
 	@echo "  make tidy           go mod tidy"
 	@echo "  make clean          remove build artifacts"
-	@echo "  make shellcheck     lint the legacy scripts/debloat.sh"
 	@echo "  make prettier       format docs/config with Prettier"
 	@echo "  make install-adb    install adb via Homebrew (macOS)"
 
@@ -63,10 +62,6 @@ tidy:
 
 clean:
 	rm -rf $(BINDIR) dist
-
-shellcheck:
-	@command -v shellcheck >/dev/null 2>&1 || { echo "shellcheck not found"; exit 1; }
-	shellcheck scripts/debloat.sh
 
 prettier:
 	npx --yes prettier@3 --write . --ignore-unknown

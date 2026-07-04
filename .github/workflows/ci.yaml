@@ -29,6 +29,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v8
         with:
+          # renovate: datasource=github-releases depName=golangci/golangci-lint
           version: v2.12.2
 
       - name: Test
@@ -36,16 +37,6 @@ jobs:
 
       - name: Build
         run: go build ./...
-
-  shell:
-    name: Shell lint (legacy script)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: ShellCheck
-        run: shellcheck scripts/debloat.sh
 
   docs:
     name: Docs & config format

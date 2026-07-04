@@ -29,15 +29,39 @@ Pick one:
 
 ## Prerequisites
 
-- **`adb`** on your `PATH` — on macOS: `make install-adb` (installs the
-  [android-platform-tools](https://developer.android.com/tools/releases/platform-tools)
-  cask via Homebrew); otherwise install Google's
-  [platform-tools](https://developer.android.com/tools/releases/platform-tools).
+- **`adb`** on your `PATH`:
+  - **macOS** — `make install-adb`, or `brew install --cask android-platform-tools`.
+  - **Linux** — from your package manager (`sudo apt install adb`,
+    `sudo dnf install android-tools`, or `sudo pacman -S android-tools`), or
+    Google's [platform-tools](https://developer.android.com/tools/releases/platform-tools).
+  - **Windows** — see below.
 - On the phone: **Developer options** → **USB debugging** enabled; accept the
   computer's RSA fingerprint when prompted.
 - One phone connected over USB (or Wi‑Fi debugging with `adb connect`). If
   several devices show up in `adb devices`, set **`ANDROID_SERIAL`** to the
   serial you want.
+
+### Windows
+
+1. **Install `adb`** — either
+   `winget install --id Google.PlatformTools` (or `choco install adb`), or
+   download Google's
+   [platform-tools](https://developer.android.com/tools/releases/platform-tools)
+   ZIP, extract it (e.g. to `C:\platform-tools`), and add that folder to your
+   **PATH** (Settings → _Edit the system environment variables_ → **Environment
+   Variables**).
+2. **Install vivo's USB driver** so Windows can see the phone — install
+   **vivo PC Suite** / **EasyShare**, or let **Windows Update** fetch the
+   driver, then confirm the phone shows up in **Device Manager** with no
+   warning icon. If `adb devices` lists the device as `unauthorized`, unlock
+   the phone and accept the RSA prompt.
+3. **Run the commands** from **PowerShell** or **Windows Terminal**. The binary
+   is `vivo-debloater.exe`; to target a specific device, set the environment
+   variable the PowerShell way:
+   ```powershell
+   $env:ANDROID_SERIAL = "ABC123"
+   .\vivo-debloater.exe list
+   ```
 
 ## Quick start
 
@@ -134,7 +158,6 @@ Follows the [Standard Go Project Layout](https://github.com/golang-standards/pro
 - `internal/adb/` — adb invocation, device detection, and output parsing.
 - `internal/packages/` — parser for `packages.txt`.
 - `packages.txt` — the default debloat list (data).
-- `scripts/debloat.sh` — the original bash implementation, kept for reference.
 - `.golangci.yaml`, `.goreleaser.yaml`, `.github/workflows/` — lint, release, CI.
 - **`backups/`** (gitignored) — a good place for `show -o` dumps so you don't
   commit device-specific lists by mistake.
@@ -144,7 +167,7 @@ Follows the [Standard Go Project Layout](https://github.com/golang-standards/pro
 ```bash
 make build      # ./bin/vivo-debloater
 make test       # go test -race ./...
-make check      # gofmt check + go vet + staticcheck + tests
+make check      # gofmt check + go vet + golangci-lint + tests
 make run ARGS='uninstall --dry-run'
 ```
 
