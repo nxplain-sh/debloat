@@ -1,0 +1,6 @@
+# Prettier configuration — https://prettier.io/docs/options
+# Pinned explicitly so local runs and CI can't drift on future default changes.
+printWidth: 80
+tabWidth: 2
+proseWrap: preserve # keep Markdown line wrapping as authored
+endOfLine: lf # matches .gitattributes (eol=lf)

@@ -1,0 +1,89 @@
+# Vivo / BBK debloat list — sourced from Technastic (2025).
+# Lines starting with # are ignored. One package per line.
+
+# Android OS common
+com.android.bookmarkprovider
+com.android.DemoVideo
+com.android.egg
+# com.android.filemanager
+# com.android.mms
+# com.android.mms.service
+com.android.notes
+com.android.printspooler
+com.android.providers.partnerbookmarks
+# com.android.providers.userdictionary
+# com.android.stk
+com.android.VideoPlayer
+# com.android.vpndialogs
+com.dsi.ant.server
+
+# BBK / iQOO / Vivo OEM
+com.android.bbkcalculator
+com.android.BBKClock
+com.android.bbklog
+com.android.bbkmusic
+com.android.bbksoundrecorder
+com.bbk.calendar
+com.bbk.cloud
+com.bbk.iqoo.logsystem
+com.bbk.photoframewidget
+com.bbk.scene.indoor
+com.bbk.SuperPowerSave
+com.bbk.theme
+com.bbk.theme.resources
+com.baidu.duersdk.opensdk
+com.baidu.input_vivo
+
+# Facebook
+com.facebook.appmanager
+com.facebook.services
+com.facebook.system
+
+# Google pre-installed (comment out anything you use)
+# com.google.android.apps.docs
+# com.google.android.apps.photos
+com.google.android.feedback
+# com.google.android.googlequicksearchbox
+com.google.android.marvin.talkback
+com.google.android.printservice.recommendation
+# com.google.ar.lens
+
+# Vivo apps
+com.ibimuyu.lockscreen
+com.vivo.assistant
+com.vivo.browser
+com.vivo.compass
+com.vivo.doubleinstance
+com.vivo.doubletimezoneclock
+com.vivo.dream.clock
+com.vivo.dream.music
+com.vivo.dream.weather
+com.vivo.easyshare
+com.vivo.email
+com.vivo.favorite
+com.vivo.floatingball
+com.vivo.fuelsummary
+com.vivo.gamewatch
+com.vivo.globalsearch
+com.vivo.hiboard
+com.vivo.vivokaraoke
+com.vivo.livewallpaper.coffeetime
+com.vivo.livewallpaper.coralsea
+com.vivo.livewallpaper.floatingcloud
+com.vivo.livewallpaper.silk
+com.vivo.magazine
+com.vivo.motormode
+com.vivo.pushservice
+com.vivo.safecenter
+com.vivo.scanner
+com.vivo.sim.contacts
+com.vivo.smartmultiwindow
+com.vivo.translator
+com.vivo.video.floating
+com.vivo.videoeditor
+# com.vivo.weather
+# com.vivo.weather.provider
+com.vivo.website
+com.vivo.widget.calendar
+com.vlife.vivo.wallpaper
+com.kikaoem.vivo.qisiemoji.inputmethod

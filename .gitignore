@@ -1,0 +1,17 @@
+.DS_Store
+Thumbs.db
+*~
+*.swp
+*.swo
+.env
+.env.*
+
+# Local device dumps from `show -o` (keep outside git)
+backups/
+
+# Go build artifacts
+/bin/
+/dist/
+*.test
+*.out
+coverage.txt

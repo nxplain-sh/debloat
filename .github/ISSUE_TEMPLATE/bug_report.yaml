@@ -1,0 +1,50 @@
+name: Bug report
+description: Report something that doesn't work as expected
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! Please **redact device serials** in any output.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Command run
+      placeholder: "vivo-debloater uninstall --dry-run -f packages.txt"
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output
+      description: Paste the relevant output (serials redacted).
+      render: shell
+  - type: input
+    id: device
+    attributes:
+      label: Device model
+      placeholder: "Vivo X200"
+    validations:
+      required: true
+  - type: input
+    id: os
+    attributes:
+      label: OriginOS / Funtouch version
+      placeholder: "OriginOS 5 / Android 15"
+  - type: input
+    id: adb
+    attributes:
+      label: adb version
+      placeholder: "35.0.2"
+  - type: input
+    id: host
+    attributes:
+      label: Host OS
+      placeholder: "macOS 15.5"
