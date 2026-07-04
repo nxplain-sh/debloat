@@ -4,6 +4,8 @@
 package adb
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"os/exec"
 	"regexp"
@@ -29,17 +31,18 @@ func New(bin string) *Client {
 }
 
 // Run executes `adb <args...>` and returns its combined stdout+stderr with
-// carriage returns and the trailing newline stripped. adb honors the
-// ANDROID_SERIAL environment variable to select a device.
-func (c *Client) Run(args ...string) (string, error) {
-	out, err := exec.Command(c.bin, args...).CombinedOutput()
+// carriage returns and the trailing newline stripped. The context can cancel a
+// hung device call. adb honors the ANDROID_SERIAL environment variable to
+// select a device.
+func (c *Client) Run(ctx context.Context, args ...string) (string, error) {
+	out, err := exec.CommandContext(ctx, c.bin, args...).CombinedOutput()
 	s := strings.ReplaceAll(string(out), "\r", "")
 	return strings.TrimRight(s, "\n"), err
 }
 
 // output runs adb and returns stdout only (stderr discarded), CR-stripped.
-func (c *Client) output(args ...string) (string, error) {
-	out, err := exec.Command(c.bin, args...).Output()
+func (c *Client) output(ctx context.Context, args ...string) (string, error) {
+	out, err := exec.CommandContext(ctx, c.bin, args...).Output()
 	return strings.ReplaceAll(string(out), "\r", ""), err
 }
 
@@ -47,18 +50,18 @@ func (c *Client) output(args ...string) (string, error) {
 // selected. serial should be the value of ANDROID_SERIAL (may be empty). With
 // several devices connected and no serial set, it returns an error listing
 // the available serials.
-func (c *Client) EnsureDevice(serial string) error {
+func (c *Client) EnsureDevice(ctx context.Context, serial string) error {
 	if _, err := exec.LookPath(c.bin); err != nil {
-		return fmt.Errorf("adb not found on PATH: install Android platform-tools")
+		return errors.New("adb not found on PATH: install Android platform-tools")
 	}
-	out, err := c.output("devices")
+	out, err := c.output(ctx, "devices")
 	if err != nil {
 		return fmt.Errorf("running `adb devices`: %w", err)
 	}
 	devices := parseDevices(out)
 	switch {
 	case len(devices) == 0:
-		return fmt.Errorf("no authorized device in `adb devices`: enable USB debugging and accept the RSA prompt")
+		return errors.New("no authorized device in `adb devices`: enable USB debugging and accept the RSA prompt")
 	case len(devices) > 1 && serial == "":
 		return fmt.Errorf("multiple devices connected; set ANDROID_SERIAL to one of: %s", strings.Join(devices, ", "))
 	}
@@ -82,10 +85,10 @@ func parseDevices(out string) []string {
 // SystemPackages returns the sorted, de-duplicated system package names on the
 // device (`pm list packages -s`), preferring the current user (`--user 0`)
 // and falling back when that flag is unsupported.
-func (c *Client) SystemPackages() ([]string, error) {
-	out, err := c.output("shell", "pm", "list", "packages", "-s", "--user", "0")
+func (c *Client) SystemPackages(ctx context.Context) ([]string, error) {
+	out, err := c.output(ctx, "shell", "pm", "list", "packages", "-s", "--user", "0")
 	if err != nil || strings.TrimSpace(out) == "" {
-		out, err = c.output("shell", "pm", "list", "packages", "-s")
+		out, err = c.output(ctx, "shell", "pm", "list", "packages", "-s")
 		if err != nil {
 			return nil, err
 		}
@@ -94,8 +97,8 @@ func (c *Client) SystemPackages() ([]string, error) {
 }
 
 // InstalledUser0 returns the set of packages installed for user 0.
-func (c *Client) InstalledUser0() (map[string]bool, error) {
-	out, err := c.output("shell", "pm", "list", "packages", "--user", "0")
+func (c *Client) InstalledUser0(ctx context.Context) (map[string]bool, error) {
+	out, err := c.output(ctx, "shell", "pm", "list", "packages", "--user", "0")
 	if err != nil {
 		return nil, err
 	}

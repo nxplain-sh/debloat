@@ -33,12 +33,14 @@ make run ARGS='uninstall --dry-run'
 Run the same checks CI runs:
 
 ```bash
-make check            # gofmt check + go vet + staticcheck + go test -race
+make check            # gofmt check + go vet + golangci-lint + go test -race
 make shellcheck       # lint the legacy scripts/debloat.sh (requires shellcheck)
 make prettier-check   # verify docs/config formatting
 ```
 
-- Go code must be **`gofmt`-clean** and pass **`go vet`** and **`staticcheck`**.
+- Go code must be **`gofmt`-clean** and pass **`go vet`** and **`golangci-lint`**
+  (config in `.golangci.yaml`; install it from
+  [golangci-lint.run](https://golangci-lint.run/welcome/install/)).
 - Add or update **tests** for behavior changes (`internal/...`).
 - The legacy **`scripts/debloat.sh`** must still pass `shellcheck`.
 - Docs and config must be **Prettier-clean** (`make prettier` to auto-format).

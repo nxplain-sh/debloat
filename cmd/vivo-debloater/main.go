@@ -4,11 +4,21 @@
 package main
 
 import (
+	"context"
 	"os"
+	"os/signal"
 
 	"github.com/miguelmartens/vivo-debloater/internal/cli"
 )
 
 func main() {
-	os.Exit(cli.Run(os.Args[1:], os.Stdout, os.Stderr))
+	os.Exit(run())
+}
+
+// run wires up signal-based cancellation and dispatches to the CLI, returning
+// the process exit code. It exists so `defer stop()` runs before os.Exit.
+func run() int {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+	return cli.Run(ctx, os.Args[1:], os.Stdout, os.Stderr)
 }

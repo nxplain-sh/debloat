@@ -20,7 +20,7 @@ help:
 	@echo "  make vet            go vet ./..."
 	@echo "  make fmt            gofmt -w ."
 	@echo "  make fmt-check      fail if gofmt would change files"
-	@echo "  make lint           staticcheck ./... (requires staticcheck)"
+	@echo "  make lint           golangci-lint run (requires golangci-lint v2)"
 	@echo "  make check          fmt-check + vet + lint + test"
 	@echo "  make tidy           go mod tidy"
 	@echo "  make clean          remove build artifacts"
@@ -52,9 +52,9 @@ fmt-check:
 	if [ -n "$$out" ]; then echo "gofmt needed on:"; echo "$$out"; exit 1; fi
 
 lint:
-	@command -v staticcheck >/dev/null 2>&1 || { \
-		echo "staticcheck not found: go install honnef.co/go/tools/cmd/staticcheck@latest"; exit 1; }
-	staticcheck ./...
+	@command -v golangci-lint >/dev/null 2>&1 || { \
+		echo "golangci-lint not found: https://golangci-lint.run/welcome/install/"; exit 1; }
+	golangci-lint run ./...
 
 check: fmt-check vet lint test
 

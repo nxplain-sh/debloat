@@ -1,0 +1,74 @@
+# golangci-lint configuration — https://golangci-lint.run
+# Schema reference:
+# https://github.com/golangci/golangci-lint/blob/main/.golangci.reference.yml
+#
+# Note: the reference file above documents every option (and lists every linter
+# as both enabled and disabled); it is not meant to be used verbatim. This is a
+# curated, working config for a small, dependency-free CLI. The Go version is
+# taken from go.mod.
+version: "2"
+
+linters:
+  # Start from the maintained "standard" set (errcheck, govet, ineffassign,
+  # staticcheck, unused) and add high-signal linters on top.
+  default: standard
+  enable:
+    - bodyclose # HTTP/response bodies are closed (future-proofing)
+    - copyloopvar # loop variable aliasing bugs
+    - errorlint # correct errors.Is/As and %w usage
+    - gocritic # broad diagnostics/style/performance checks
+    - goprintffuncname # printf-like funcs end in "f"
+    - gosec # security-focused checks
+    - misspell # spelling in comments/strings
+    - nakedret # discourage naked returns in longer funcs
+    - nilerr # returning nil after a non-nil error check
+    - noctx # HTTP requests should carry a context
+    - perfsprint # prefer strconv/errors.New over fmt.Sprint(f)
+    - revive # golint successor: naming, docs, style
+    - unconvert # redundant type conversions
+    - unparam # unused function parameters/results
+    - usestdlibvars # use stdlib constants (http.MethodGet, etc.)
+    - wastedassign # assignments never read
+    - whitespace # leading/trailing whitespace in blocks
+
+  settings:
+    gosec:
+      # These rules are inherent to what this tool does and are false positives
+      # here; excluding them centrally keeps the rationale in one place rather
+      # than scattering //nosec comments:
+      excludes:
+        - G204 # execs the fixed `adb` binary with package names from a controlled list (no shell)
+        - G301 # dirs created for user-facing dumps use standard 0755
+        - G304 # file paths (package list, -o dump) are user-provided by design
+        - G306 # user-facing dump files use standard 0644
+    revive:
+      rules:
+        - name: package-comments
+        - name: exported
+        - name: var-naming
+        - name: error-strings
+        - name: indent-error-flow
+        - name: unexported-return
+        - name: unreachable-code
+
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      # Relax a few checks in tests.
+      - path: _test\.go
+        linters:
+          - gosec
+
+formatters:
+  enable:
+    - gofmt
+    - goimports
+  settings:
+    goimports:
+      local-prefixes:
+        - github.com/miguelmartens/vivo-debloater

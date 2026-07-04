@@ -3,6 +3,7 @@
 package cli
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"io"
@@ -51,8 +52,9 @@ var mutations = map[string]mutation{
 }
 
 // Run parses args (the program arguments, excluding the program name) and
-// executes the selected command, returning a process exit code.
-func Run(args []string, stdout, stderr io.Writer) int {
+// executes the selected command, returning a process exit code. The context
+// cancels in-flight adb calls (e.g. on Ctrl-C).
+func Run(ctx context.Context, args []string, stdout, stderr io.Writer) int {
 	if len(args) == 0 {
 		fmt.Fprintln(stderr, "missing command")
 		usage(stderr)
@@ -67,11 +69,11 @@ func Run(args []string, stdout, stderr io.Writer) int {
 		fmt.Fprintf(stdout, "vivo-debloater %s\n", version)
 		return 0
 	case "show":
-		return runShow(rest, stdout, stderr)
+		return runShow(ctx, rest, stdout, stderr)
 	case "list":
-		return runList(rest, stdout, stderr)
+		return runList(ctx, rest, stdout, stderr)
 	case "uninstall", "freeze", "disable", "reinstall":
-		return runMutate(cmd, rest, stdout, stderr)
+		return runMutate(ctx, cmd, rest, stdout, stderr)
 	default:
 		fmt.Fprintf(stderr, "unknown command: %s\n", cmd)
 		fmt.Fprintln(stderr, "valid: show, list, uninstall, freeze, disable, reinstall")
@@ -79,7 +81,7 @@ func Run(args []string, stdout, stderr io.Writer) int {
 	}
 }
 
-func runShow(args []string, stdout, stderr io.Writer) int {
+func runShow(ctx context.Context, args []string, stdout, stderr io.Writer) int {
 	fs := newFlagSet("show", stderr)
 	var output string
 	stringFlag(fs, &output, "", "write the package list to FILE instead of stdout", "o", "output")
@@ -88,11 +90,11 @@ func runShow(args []string, stdout, stderr io.Writer) int {
 	}
 
 	client := adb.New("")
-	if err := client.EnsureDevice(os.Getenv("ANDROID_SERIAL")); err != nil {
+	if err := client.EnsureDevice(ctx, os.Getenv("ANDROID_SERIAL")); err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
-	pkgs, err := client.SystemPackages()
+	pkgs, err := client.SystemPackages(ctx)
 	if err != nil || len(pkgs) == 0 {
 		fmt.Fprintln(stderr, "failed to read system packages: is the device authorized for adb?")
 		return 1
@@ -117,7 +119,7 @@ func runShow(args []string, stdout, stderr io.Writer) int {
 	return 0
 }
 
-func runList(args []string, stdout, stderr io.Writer) int {
+func runList(ctx context.Context, args []string, stdout, stderr io.Writer) int {
 	fs := newFlagSet("list", stderr)
 	var file string
 	stringFlag(fs, &file, defaultPackagesFile, "package list file", "f", "file")
@@ -132,11 +134,11 @@ func runList(args []string, stdout, stderr io.Writer) int {
 	}
 
 	client := adb.New("")
-	if err := client.EnsureDevice(os.Getenv("ANDROID_SERIAL")); err != nil {
+	if err := client.EnsureDevice(ctx, os.Getenv("ANDROID_SERIAL")); err != nil {
 		fmt.Fprintln(stderr, err)
 		return 1
 	}
-	installed, err := client.InstalledUser0()
+	installed, err := client.InstalledUser0(ctx)
 	if err != nil {
 		fmt.Fprintf(stderr, "listing installed packages: %v\n", err)
 		return 1
@@ -152,7 +154,7 @@ func runList(args []string, stdout, stderr io.Writer) int {
 	return 0
 }
 
-func runMutate(cmd string, args []string, stdout, stderr io.Writer) int {
+func runMutate(ctx context.Context, cmd string, args []string, stdout, stderr io.Writer) int {
 	fs := newFlagSet(cmd, stderr)
 	var (
 		file   string
@@ -173,7 +175,7 @@ func runMutate(cmd string, args []string, stdout, stderr io.Writer) int {
 	m := mutations[cmd]
 	client := adb.New("")
 	if !dryRun {
-		if err := client.EnsureDevice(os.Getenv("ANDROID_SERIAL")); err != nil {
+		if err := client.EnsureDevice(ctx, os.Getenv("ANDROID_SERIAL")); err != nil {
 			fmt.Fprintln(stderr, err)
 			return 1
 		}
@@ -189,7 +191,7 @@ func runMutate(cmd string, args []string, stdout, stderr io.Writer) int {
 		}
 
 		fmt.Fprintf(stdout, "%s: %s\n", m.verb, p)
-		out, runErr := client.Run(cmdArgs...)
+		out, runErr := client.Run(ctx, cmdArgs...)
 		if out != "" {
 			fmt.Fprintf(stdout, "  %s\n", strings.ReplaceAll(out, "\n", "\n  "))
 		}
@@ -197,11 +199,10 @@ func runMutate(cmd string, args []string, stdout, stderr io.Writer) int {
 			ok++
 			continue
 		}
-		switch adb.Classify(out) {
-		case adb.ResultSkipped:
+		if adb.Classify(out) == adb.ResultSkipped {
 			fmt.Fprintln(stderr, "  → skipped (not installed for user 0 on this device, or already removed)")
 			skipped++
-		default:
+		} else {
 			failed++
 		}
 	}

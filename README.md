@@ -135,7 +135,7 @@ Follows the [Standard Go Project Layout](https://github.com/golang-standards/pro
 - `internal/packages/` — parser for `packages.txt`.
 - `packages.txt` — the default debloat list (data).
 - `scripts/debloat.sh` — the original bash implementation, kept for reference.
-- `.goreleaser.yaml`, `.github/workflows/` — release and CI.
+- `.golangci.yaml`, `.goreleaser.yaml`, `.github/workflows/` — lint, release, CI.
 - **`backups/`** (gitignored) — a good place for `show -o` dumps so you don't
   commit device-specific lists by mistake.
 

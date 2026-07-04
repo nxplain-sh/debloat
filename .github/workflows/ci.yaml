@@ -20,26 +20,16 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: stable
+          go-version-file: go.mod
           cache: true
-
-      - name: Verify gofmt
-        run: |
-          unformatted=$(gofmt -l .)
-          if [ -n "$unformatted" ]; then
-            echo "These files need gofmt:"
-            echo "$unformatted"
-            exit 1
-          fi
 
       - name: go vet
         run: go vet ./...
 
-      - name: staticcheck
-        uses: dominikh/staticcheck-action@v1
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v8
         with:
-          version: latest
-          install-go: false
+          version: v2.12.2
 
       - name: Test
         run: go test -race ./...
