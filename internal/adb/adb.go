@@ -1,5 +1,5 @@
 // Package adb wraps the Android Debug Bridge (adb) command-line tool with the
-// small set of operations vivo-debloater needs. adb itself remains an external
+// small set of operations debloat needs. adb itself remains an external
 // dependency and must be on PATH.
 package adb
 

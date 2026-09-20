@@ -1,6 +1,6 @@
-# Contributing to vivo-debloater
+# Contributing to debloat
 
-Thanks for your interest in improving vivo-debloater! This is a small,
+Thanks for your interest in improving debloat! This is a small,
 no-root ADB helper for debloating Vivo (BBK) phones. Contributions of all
 sizes are welcome — bug fixes, package-list corrections, and documentation.
 
@@ -15,10 +15,11 @@ sizes are welcome — bug fixes, package-list corrections, and documentation.
 ## Getting set up
 
 ```bash
-git clone https://github.com/miguelmartens/vivo-debloater.git
-cd vivo-debloater
+git clone https://github.com/nxplain-sh/debloat.git
+cd debloat
 make install-adb        # optional: adb via Homebrew (android-platform-tools)
-make build              # ./bin/vivo-debloater
+make build              # ./bin/debloat
+make hooks              # enable the pre-commit hook (fmt-check + vet + test)
 ```
 
 You can develop and test most changes **without a phone** using `--dry-run`,
@@ -34,15 +35,22 @@ Run the same checks CI runs:
 
 ```bash
 make check            # gofmt check + go vet + golangci-lint + go test -race
-make prettier-check   # verify docs/config formatting
+make format-check     # verify docs/config formatting
 ```
 
 - Go code must be **`gofmt`-clean** and pass **`go vet`** and **`golangci-lint`**
   (config in `.golangci.yaml`; install it from
   [golangci-lint.run](https://golangci-lint.run/welcome/install/)).
 - Add or update **tests** for behavior changes (`internal/...`).
-- Docs and config must be **Prettier-clean** (`make prettier` to auto-format).
+- Docs and config must be **Prettier-clean** (`npm install` once, then
+  `make format` to auto-format).
 - If you touch behavior, update `README.md` to match.
+
+## Architecture decisions
+
+Significant technical decisions are recorded in `docs/adr/`. Start new records
+from `docs/adr/0000-template.md` and add them to the index in
+`docs/adr/README.md`.
 
 ## Editing the package list
 

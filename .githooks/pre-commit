@@ -1,0 +1,3 @@
+#!/bin/sh
+# Runs the fast checks from `make check` (lint and Prettier stay in CI / pre-PR).
+exec make fmt-check vet test

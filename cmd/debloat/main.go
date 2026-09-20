@@ -1,4 +1,4 @@
-// Command vivo-debloater lists and removes preinstalled apps on Vivo (BBK)
+// Command debloat lists and removes preinstalled apps on Vivo (BBK)
 // phones over adb, without root. It is a thin wrapper: the real work lives in
 // internal packages.
 package main
@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/signal"
 
-	"github.com/miguelmartens/vivo-debloater/internal/cli"
+	"github.com/nxplain-sh/debloat/internal/cli"
 )
 
 func main() {

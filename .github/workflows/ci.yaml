@@ -45,5 +45,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Prettier
+        run: npm ci
+
       - name: Prettier (check formatting)
-        run: npx --yes prettier@3 --check . --ignore-unknown
+        run: npx --yes prettier --check . --ignore-unknown

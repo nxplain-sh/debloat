@@ -9,6 +9,9 @@ Thumbs.db
 # Local device dumps from `show -o` (keep outside git)
 backups/
 
+# Node tooling (Prettier)
+node_modules/
+
 # Go build artifacts
 /bin/
 /dist/
