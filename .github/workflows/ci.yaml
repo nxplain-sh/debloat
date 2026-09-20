@@ -30,7 +30,7 @@ jobs:
         uses: golangci/golangci-lint-action@v8
         with:
           # renovate: datasource=github-releases depName=golangci/golangci-lint
-          version: v2.12.2
+          version: v2.13.2
 
       - name: Test
         run: go test -race ./...
