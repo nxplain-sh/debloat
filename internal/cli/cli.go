@@ -1,5 +1,5 @@
-// Package cli implements the vivo-debloater command-line interface. Run is the
-// single entry point invoked from cmd/vivo-debloater.
+// Package cli implements the debloat command-line interface. Run is the
+// single entry point invoked from cmd/debloat.
 package cli
 
 import (
@@ -11,8 +11,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/miguelmartens/vivo-debloater/internal/adb"
-	"github.com/miguelmartens/vivo-debloater/internal/packages"
+	"github.com/nxplain-sh/debloat/internal/adb"
+	"github.com/nxplain-sh/debloat/internal/packages"
 )
 
 // version is overridden at release time via -ldflags
@@ -66,7 +66,7 @@ func Run(ctx context.Context, args []string, stdout, stderr io.Writer) int {
 		usage(stdout)
 		return 0
 	case "version", "-v", "--version":
-		fmt.Fprintf(stdout, "vivo-debloater %s\n", version)
+		fmt.Fprintf(stdout, "debloat %s\n", version)
 		return 0
 	case "show":
 		return runShow(ctx, rest, stdout, stderr)
@@ -243,10 +243,11 @@ func boolFlag(fs *flag.FlagSet, p *bool, usage string, names ...string) {
 }
 
 func usage(w io.Writer) {
-	fmt.Fprint(w, `vivo-debloater — debloat Vivo (BBK) phones over adb, without root
+	fmt.Fprint(w, `debloat — remove preinstalled apps from Vivo (BBK) phones over adb,
+without root
 
 Usage:
-  vivo-debloater <command> [flags]
+  debloat <command> [flags]
 
 Commands:
   show        Print system package names from the device (pm list packages -s)
@@ -269,9 +270,9 @@ Environment:
   ANDROID_SERIAL      target device when several are connected
 
 Examples:
-  vivo-debloater show -o backups/phone.txt
-  vivo-debloater list -f packages.txt
-  vivo-debloater uninstall --dry-run
-  vivo-debloater uninstall
+  debloat show -o backups/phone.txt
+  debloat list -f packages.txt
+  debloat uninstall --dry-run
+  debloat uninstall
 `)
 }

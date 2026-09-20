@@ -1,4 +1,4 @@
-// Package packages parses the vivo-debloater package-list file: one Android
+// Package packages parses the debloat package-list file: one Android
 // package name per line, with `#` comments and blank lines ignored.
 package packages
 

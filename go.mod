@@ -1,3 +1,3 @@
-module github.com/miguelmartens/vivo-debloater
+module github.com/nxplain-sh/debloat
 
 go 1.26.4

@@ -15,7 +15,7 @@
 ## Checklist
 
 - [ ] `make check` passes (gofmt, go vet, golangci-lint, tests)
-- [ ] `make prettier-check` passes
+- [ ] `make format-check` passes
 - [ ] Tested with `--dry-run` and/or on a real device
 - [ ] Updated `README.md` if behavior changed
 

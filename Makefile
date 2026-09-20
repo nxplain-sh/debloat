@@ -1,17 +1,17 @@
-# vivo-debloater — Go CLI for debloating Vivo (BBK) phones over adb.
+# debloat — Go CLI for debloating Vivo (BBK) phones over adb.
 
-BINARY  := vivo-debloater
-CMD     := ./cmd/vivo-debloater
+BINARY  := debloat
+CMD     := ./cmd/debloat
 BINDIR  := bin
 VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
-LDFLAGS := -s -w -X github.com/miguelmartens/vivo-debloater/internal/cli.version=$(VERSION)
+LDFLAGS := -s -w -X github.com/nxplain-sh/debloat/internal/cli.version=$(VERSION)
 
 .DEFAULT_GOAL := help
 .PHONY: help build install run test vet fmt fmt-check lint check tidy clean \
-        prettier prettier-check install-adb
+        format format-check install-adb hooks
 
 help:
-	@echo "vivo-debloater"
+	@echo "debloat"
 	@echo ""
 	@echo "  make build          Build $(BINDIR)/$(BINARY)"
 	@echo "  make install        go install $(CMD)"
@@ -24,8 +24,10 @@ help:
 	@echo "  make check          fmt-check + vet + lint + test"
 	@echo "  make tidy           go mod tidy"
 	@echo "  make clean          remove build artifacts"
-	@echo "  make prettier       format docs/config with Prettier"
+	@echo "  make format         format docs/config with Prettier"
+	@echo "  make format-check   fail if Prettier would change files"
 	@echo "  make install-adb    install adb via Homebrew (macOS)"
+	@echo "  make hooks          enable the repo's git pre-commit hook"
 
 build:
 	@mkdir -p $(BINDIR)
@@ -63,11 +65,15 @@ tidy:
 clean:
 	rm -rf $(BINDIR) dist
 
-prettier:
-	npx --yes prettier@3 --write . --ignore-unknown
+format:
+	npx --yes prettier --write . --ignore-unknown
 
-prettier-check:
-	npx --yes prettier@3 --check . --ignore-unknown
+format-check:
+	npx --yes prettier --check . --ignore-unknown
+
+hooks:
+	git config core.hooksPath .githooks
+	@echo "pre-commit hook enabled (fmt-check + vet + test)"
 
 install-adb:
 	@command -v brew >/dev/null 2>&1 || { echo "Homebrew not found. Install from https://brew.sh"; exit 1; }

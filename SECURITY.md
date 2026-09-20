@@ -2,7 +2,7 @@
 
 ## Scope
 
-vivo-debloater is a local Go CLI that drives `adb`. It has no server, no
+debloat is a local Go CLI that drives `adb`. It has no server, no
 network service, and stores no credentials. The main risk surface is:
 
 - how package names and file paths from `packages.txt` are passed to `adb`, and
